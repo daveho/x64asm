@@ -77,20 +77,36 @@ public:
     return std::make_pair(val_, val2_) < std::make_pair(rhs.val_, rhs.val2_);
   }
 
+  /** Set a pointer to a label string. The Operand does not
+   * accept responsibility for deallocating the string's memory. */
+  void set_label(const char *label) { label_ = label; }
+
+  /** Does this Operand have a pointer to a label string? */
+  bool has_label() const { return label_ != nullptr; }
+
+  /** Get pointer to the Operand's label string.
+   * Returns nullptr if the Operand doesn't have a label string. */
+  const char *get_label() const { return label_; }
+
 protected:
   /** Creates an operand with a type and no underlying value. */
-  constexpr Operand(Type t) : val_(0), val2_((uint64_t)t << 3) {}
+  constexpr Operand(Type t) : val_(0), val2_((uint64_t)t << 3), label_(nullptr) {}
   /** Creates an operand with a type and one underlying value. */
-  constexpr Operand(Type t, uint64_t val) : val_(val), val2_((uint64_t)t << 3) {}
+  constexpr Operand(Type t, uint64_t val) : val_(val), val2_((uint64_t)t << 3), label_(nullptr) {}
   /** Creates an operand with a type and two underlying values. */
-  constexpr Operand(Type t, uint64_t val, uint64_t val2) : val_(val), val2_(val2 | ((uint64_t)t << 3)) {}
+  constexpr Operand(Type t, uint64_t val, uint64_t val2) : val_(val), val2_(val2 | ((uint64_t)t << 3)), label_(nullptr) {}
   /** Creates an operand with no type and no underlying value. */
-  constexpr Operand() : val_(0), val2_(0) {}
+  constexpr Operand() : val_(0), val2_(0), label_(nullptr) {}
 
   /** Underlying value. */
   uint64_t val_;
   /** Extended storage space for underlying value. */
   uint64_t val2_;
+  /** Pointer to interned label. This avoids losing the name
+   * of the function or data object the operand refers to if
+   * x86asm wants to (prematurely, IMO) resolve a memory
+   * address.*/
+  const char *label_;
 
 private:
   /** Forcibly change the underlying type.  Actually, most of the time

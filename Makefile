@@ -39,7 +39,8 @@ OBJ=src/assembler.o \
 		src/type.o \
 		src/mm.o \
 		src/xmm.o \
-		src/ymm.o
+		src/ymm.o \
+		src/strpool.o
 
 LIB=lib/libx64asm.a
 
