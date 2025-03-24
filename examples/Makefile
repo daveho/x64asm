@@ -1,6 +1,7 @@
-CC  = g++ -std=c++0x
-OPT = -Werror -O3
-EX  = abi constants context dataflow functions hello linker
+CC  = g++ -std=c++0x -g
+#OPT = -Werror -O3
+OPT = -Werror
+EX  = abi constants context dataflow functions hello linker fncall_label
 
 all: $(EX)
 
@@ -24,6 +25,9 @@ hello: hello.cc
 
 linker: linker.cc
 	$(CC) $(OPT) linker.cc -I../ ../lib/libx64asm.a -o linker
+
+fncall_label : fncall_label.cc
+	$(CC) $(OPT) fncall_label.cc -I../ ../lib/libx64asm.a -o fncall_label
 
 clean:
 	rm -f $(EX)

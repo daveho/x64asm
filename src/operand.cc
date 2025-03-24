@@ -16,6 +16,10 @@ using namespace cpputil;
 
 mutex Label::maps_mutex;
 
+// String pool for interned labels
+StrPool Operand::s_strpool;
+std::mutex Operand::s_strpool_lock;
+
 uint16_t Operand::size() const {
   return bit_width_of_type(type());
 }
@@ -196,3 +200,18 @@ ostream& Operand::write_att(ostream& os) const {
   return os;
 }
 
+void Operand::set_label( const std::string &label ) {
+  std::lock_guard<std::mutex> g( s_strpool_lock );
+  const char *label_str = s_strpool.intern( label );
+  label_ = label_str;
+}
+
+std::string Operand::get_label() const {
+  if ( label_ != nullptr )
+    return std::string( label_ );
+  if ( type() == Type::LABEL ) {
+    const Label &label = static_cast<const Label &>( *this );
+    return label.get_text();
+  }
+  return "";
+}

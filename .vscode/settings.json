@@ -1,0 +1,7 @@
+{
+  "files.associations": {
+    "*.decl": "cpp",
+    "*.defn": "cpp",
+    "*.switch": "cpp"
+  }
+}

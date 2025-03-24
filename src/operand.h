@@ -17,10 +17,12 @@ limitations under the License.
 #ifndef X64ASM_SRC_OPERAND_H
 #define X64ASM_SRC_OPERAND_H
 
+#include <mutex>
 #include <array>
 #include <stdint.h>
 
 #include "src/type.h"
+#include "src/strpool.h"
 
 namespace x64asm {
 
@@ -77,16 +79,17 @@ public:
     return std::make_pair(val_, val2_) < std::make_pair(rhs.val_, rhs.val2_);
   }
 
-  /** Set a pointer to a label string. The Operand does not
-   * accept responsibility for deallocating the string's memory. */
-  void set_label(const char *label) { label_ = label; }
+  /** Set a label on this Operand.
+   * This is useful for recording the label for a memory operand. */
+  void set_label( const std::string &label );
 
-  /** Does this Operand have a pointer to a label string? */
-  bool has_label() const { return label_ != nullptr; }
-
-  /** Get pointer to the Operand's label string.
-   * Returns nullptr if the Operand doesn't have a label string. */
-  const char *get_label() const { return label_; }
+  /** Get this Operand's label. This is mainly intended
+   * for getting access to a label for a memory operand for
+   * which x64asm didn't know the address. In theory this
+   * function should also work if called on an Operand that
+   * actually is a Label.
+   */
+  std::string get_label() const;
 
 protected:
   /** Creates an operand with a type and no underlying value. */
@@ -108,6 +111,9 @@ protected:
    * address.*/
   const char *label_;
 
+  /** Get a pointer to an interned string to use for set_label. */
+  static const char *intern( const std::string &s );
+
 private:
   /** Forcibly change the underlying type.  Actually, most of the time
    * this function does nothing, because it believes the caller is stupid
@@ -125,6 +131,12 @@ private:
       val2_ = ((uint64_t)t << 3) | (val2_ & 0x7);
     }
   }
+
+  /** String pool for allocating label strings. */
+  static StrPool s_strpool;
+
+  /** Mutex to synchronize string pool operations. */
+  static std::mutex s_strpool_lock;
 };
 
 } // namespace x64asm

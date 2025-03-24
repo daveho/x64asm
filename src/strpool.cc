@@ -37,8 +37,7 @@ const char *StrPool::alloc( const std::string &s ) {
   size_t need = s.size() + 1;
   
   for (;;) {
-    size_t avail = STRPOOL_CHUNK_SIZE - m_head->bytes_allocated;
-    if ( need <= avail ) {
+    if ( need <= m_head->get_bytes_available() ) {
       // can allocate in this chunk
       char *str = m_head->mem + m_head->bytes_allocated;
       m_head->bytes_allocated += need;

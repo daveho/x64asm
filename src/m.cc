@@ -239,7 +239,16 @@ std::istream& Mem::read_att(std::istream& is) {
   }
 
   if(!ok) {  //it doesn't look like a memory reference.  could be anything.
+#if 0
     cpputil::fail(is) << "Don't know how to parse this!";
+#else
+    // DHH: assume that this is a label, e.g., the "printf" in "callq printf".
+    // I've updated Operand to allow each Operand to have an interned label
+    // string.
+    std::string label_str;
+    is >> label_str;
+    set_label( label_str );
+#endif
   }
   return is;
 }

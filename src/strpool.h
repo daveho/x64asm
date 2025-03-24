@@ -16,6 +16,8 @@ struct StrPoolChunk {
 
   StrPoolChunk( StrPoolChunk *next ) : bytes_allocated( 0 ), next( next ) { }
 
+  size_t get_bytes_available() const { return STRPOOL_CHUNK_SIZE - bytes_allocated; }
+
 private:
   // no value semantics
   StrPoolChunk( const StrPoolChunk & ) = delete;
