@@ -91,6 +91,10 @@ public:
    */
   std::string get_label() const;
 
+  /** Return true if this Operand has a label,
+   * false otherwise. */
+  bool has_label() const { return get_label() != ""; }
+
 protected:
   /** Creates an operand with a type and no underlying value. */
   constexpr Operand(Type t) : val_(0), val2_((uint64_t)t << 3), label_(nullptr) {}
