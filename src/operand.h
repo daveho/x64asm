@@ -74,6 +74,12 @@ public:
   /** Write this operand to an output stream */
   std::ostream& write_att(std::ostream& os) const;
 
+  /** Hacky mechanism to attempt to print an Operand symbolically
+   * if it has a label string. Returns true if the Operand was printed
+   * symbolically, false otherwise.
+   */
+  bool maybe_write_symbolically( std::ostream &os ) const;
+
   /** Comparison based on underlying values. */
   bool operator<(const Operand& rhs) const {
     return std::make_pair(val_, val2_) < std::make_pair(rhs.val_, rhs.val2_);

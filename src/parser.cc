@@ -394,11 +394,8 @@ ostream& Instruction::write_att(ostream& os, bool symbolic) const {
     for (int i = (int)arity() - 1; i >= 0; --i) {
       if ( symbolic ) {
         // Print the operand as a symbolic label if possible.
-        const Operand &operand = get_operand<Operand>(i);
-        if ( operand.has_label() ) {
-          if ( operand.is_immediate() )
-            os << "$";
-          os << operand.get_label();
+        const Operand &operand = get_operand<Operand>( i );
+        if ( operand.maybe_write_symbolically( os ) ) {
           if ( i != 0 )
             os << ", ";
           continue;

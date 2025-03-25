@@ -208,6 +208,16 @@ ostream& Operand::write_att(ostream& os) const {
   return os;
 }
 
+bool Operand::maybe_write_symbolically( std::ostream &os ) const {
+  if ( !has_label() )
+    return false;
+  if ( is_immediate() )
+    os << "$";
+  os << get_label();
+  return true;
+}
+
+
 void Operand::set_label( const std::string &label ) {
   std::lock_guard<std::mutex> g( s_strpool_lock );
   const char *label_str = s_strpool.intern( label );
