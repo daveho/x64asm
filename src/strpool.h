@@ -26,9 +26,6 @@ public:
   ~StrPool();
 
   const char *intern( const std::string &s );
-
-private:
-  const char *alloc( const std::string &s );
 };
 
 } // end x64asm namespace
