@@ -209,25 +209,31 @@ namespace x64asm {
 
 /** Promotes an operand to a given type.  */
 void Instruction::promote(Operand* op, Type target) {
+  // Make sure label gets preserved if there is one
+  const char *label = op->label_;
 
   switch(target) {
     case Type::IMM_8: {
       uint64_t value = (uint64_t)*static_cast<Imm64*>(op);
       *op = Imm8(value & 0xff);
+      op->label_ = label;
       return;
     }
     case Type::IMM_16: {
       uint64_t value = (uint64_t)*static_cast<Imm64*>(op);
       *op = Imm16(value & 0xffff);
+      op->label_ = label;
       return;
     }
     case Type::IMM_32: {
       uint64_t value = (uint64_t)*static_cast<Imm64*>(op);
       *op = Imm32(value & 0xffffffff);
+      op->label_ = label;
       return;
     }
     default:
       op->set_type_maybe_unless_I_know_better_hack(target);
+      op->label_ = label;
       return;
   }
 
