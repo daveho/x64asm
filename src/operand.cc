@@ -135,6 +135,8 @@ istream& Operand::read_att(istream& is) {
       neg = true;
     }
 
+    std::string label_str; // in case immediate is specified by a label
+
     if(tmp.peek() == '0') {
       tmp.ignore();
       char c = tmp.peek();
@@ -146,6 +148,9 @@ istream& Operand::read_att(istream& is) {
       } else {
         value = 0;
       }
+    } else if ( tmp.peek() == '.' || tmp.peek() == '_' || std::isalpha( tmp.peek() ) ) {
+      // Presumably the immediate is a label
+      tmp >> label_str;
     } else {
       tmp >> dec >> value;
     }
@@ -154,6 +159,9 @@ istream& Operand::read_att(istream& is) {
       value = -value;
 
     Imm64 imm(value);
+    if ( !label_str.empty() )
+      imm.set_label( label_str );
+
     *this = imm;
 
     return is;
