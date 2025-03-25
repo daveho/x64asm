@@ -378,7 +378,7 @@ istream& Instruction::read_att(istream& is) {
 }
 
 
-ostream& Instruction::write_att(ostream& os) const {
+ostream& Instruction::write_att(ostream& os, bool symbolic) const {
   assert((size_t)get_opcode() < X64ASM_NUM_OPCODES);
 
   if (get_opcode() == LABEL_DEFN) {
@@ -389,9 +389,22 @@ ostream& Instruction::write_att(ostream& os) const {
 
   string opcode = opcode_write_att(get_opcode());
   os << opcode;
-  if (arity() > 0)
+  if (arity() > 0) {
     os << " ";
     for (int i = (int)arity() - 1; i >= 0; --i) {
+      if ( symbolic ) {
+        // Print the operand as a symbolic label if possible.
+        const Operand &operand = get_operand<Operand>(i);
+        if ( operand.has_label() ) {
+          if ( operand.is_immediate() )
+            os << "$";
+          os << operand.get_label();
+          if ( i != 0 )
+            os << ", ";
+          continue;
+        }
+      }
+
       switch (type(i)) {
       case Type::HINT:
         get_operand<Hint>(i).write_att(os);
@@ -529,6 +542,7 @@ ostream& Instruction::write_att(ostream& os) const {
         os << ", ";
       }
     }
+  }
 
   return os;
 }

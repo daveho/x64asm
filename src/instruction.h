@@ -741,8 +741,12 @@ public:
 
   /** Reads an instruction from an istream using at&t syntax. */
   std::istream& read_att(std::istream& is);
-  /** Writes this instruction to an ostream using at&t syntax. */
-  std::ostream& write_att(std::ostream& os) const;
+  /** Writes this instruction to an ostream using at&t syntax.
+   * If the symbolic parameter is true, then any Operand that
+   * has a label will print the text of the label rather than
+   * whatever numeric value x86asm thinks the Operand represents.
+   */
+  std::ostream& write_att(std::ostream& os, bool symbolic = false) const;
 
   /** @Deprecated. Use is_jcc() */
   bool is_cond_jump() const {
@@ -804,6 +808,16 @@ private:
   bool is_xor_reg_reg() const;
 };
 
+// Access the symbolic long element in given ostream.
+// Used to implement the x64asm::symbolic I/O manipulator.
+long &symbolic_iword( std::ostream &os );
+
+// I/O manipulator to print Instruction operands symbolically.
+// This works around the problem that x64asm always wants called
+// functions to be numeric addresses, whereas the user might
+// be interested in the name of the called function.
+std::ostream &symbolic( std::ostream &os );
+
 } // namespace x64asm
 
 namespace std {
@@ -827,7 +841,10 @@ inline istream& operator>>(istream& is, x64asm::Instruction& i) {
 }
 /** iostream overload. */
 inline ostream& operator<<(ostream& os, const x64asm::Instruction& i) {
-  return i.write_att(os);
+  long &is_symbolic = x64asm::symbolic_iword( os );
+  i.write_att(os, is_symbolic != 0);
+  is_symbolic = 0;
+  return os;
 }
 
 } // namespace std

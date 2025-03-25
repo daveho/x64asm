@@ -6,6 +6,9 @@ int main() {
   x64asm::Instruction ins( x64asm::NOP );
   std::stringstream ss( call_ins );
   ss >> ins;
-  std::cout << ins << "\n";
+  // Using the x64asm::symbolic I/O manipulator should result
+  // in seeing "printf" as the operand to callq rather than
+  // some meaningless address.
+  std::cout << x64asm::symbolic << ins << "\n";
   return 0;
 }

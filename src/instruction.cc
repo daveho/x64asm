@@ -30,6 +30,17 @@ limitations under the License.
 
 using namespace std;
 
+namespace {
+
+// Index of the long element in the ios_base storage
+// that we use to implement the x64asm::symbolic I/O manipulator.
+// A 0 value (the default) means not symbolic, a 1 value
+// means symbolic. The value is always set back to 0
+// at the end of the Instruction stream insertion operator.
+const int symbolic_xindex = std::ios_base::xalloc();
+
+}
+
 namespace x64asm {
 
 bool Instruction::is_xor_reg_reg() const {
@@ -851,6 +862,15 @@ size_t Instruction::hash() const {
       break;
     }
   return res;
+}
+
+long &symbolic_iword( std::ostream &os ) {
+  return os.iword( symbolic_xindex );
+}
+
+std::ostream &symbolic( std::ostream &os ) {
+  symbolic_iword( os ) = 1;
+  return os;
 }
 
 const array<size_t, X64ASM_NUM_OPCODES> Instruction::arity_ {{
