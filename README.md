@@ -1,6 +1,21 @@
 x64asm
 =====
 
+*Note*: this is a modified version of x64asm. It was modified by
+[David Hovemeyer](https://www.cs.jhu.edu/~daveho) for the following
+reasons:
+
+* Fix superfluous `const` qualifiers in typecasts which prevented
+  the code from compiling on recent versions of g++
+* Preserve symbolic information about the label operand in call instructions
+  (this adds a `const char *` pointer to the `Operand` type)
+* Allow printing instructions with symbolic rather than fake address
+  information when call instructions are printed: a
+  `x64asm::symbolic` I/O manipulator exists to allow this (without
+  which you should get the original behavior)
+
+I *believe* that my changes are backwards compatible, but no guarantees.
+
 x64asm is a c++11 library for working with x86_64 assembly. It provides a parser, in-memory assembler and linker, and primitives for building data flow analyses. x64asm was built with the following design goals in mind:
 
 - __Simplicity:__ x64 asm does NOT include a register allocator, instruction scheduler, control flow graph builder, or any of the features you would expect of a full compiler. It is a low-level library for building YOUR optimizing compiler.
