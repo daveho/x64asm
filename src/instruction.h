@@ -837,7 +837,9 @@ inline void swap(x64asm::Instruction& lhs, x64asm::Instruction& rhs) {
 
 /** iostream overload. */
 inline istream& operator>>(istream& is, x64asm::Instruction& i) {
-  return i.read_att(is);
+  i.read_att(is);
+  x64asm::ident_as_label_iword( is ) = 0; // make sure this gets reset
+  return is;
 }
 /** iostream overload. */
 inline ostream& operator<<(ostream& os, const x64asm::Instruction& i) {

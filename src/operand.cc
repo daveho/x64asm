@@ -45,6 +45,8 @@ bool Operand::is_immediate() const {
 }
 
 istream& Operand::read_att(istream& is) {
+  // Treat identifiers as labels?
+  long &ident_as_label = x64asm::ident_as_label_iword( is );
 
   if(is.peek() == '*')
     is.ignore();
@@ -165,7 +167,7 @@ istream& Operand::read_att(istream& is) {
     *this = imm;
 
     return is;
-  } else if (first_char == '.') {
+  } else if (first_char == '.' || (ident_as_label && (std::isalpha(first_char) || first_char == '_'))) {
     // Labels
     stringstream ss;
     ss << name;
@@ -232,4 +234,19 @@ std::string Operand::get_label() const {
     return label.get_text();
   }
   return "";
+}
+
+namespace {
+
+long ident_as_label_xindex = std::ios_base::xalloc();
+
+}
+
+long &x64asm::ident_as_label_iword( std::istream &is ) {
+  return is.iword( ident_as_label_xindex );
+}
+
+std::istream &x64asm::ident_as_label( std::istream &is ) {
+  ident_as_label_iword( is ) = 1;
+  return is;
 }

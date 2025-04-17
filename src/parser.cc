@@ -240,6 +240,7 @@ void Instruction::promote(Operand* op, Type target) {
 }
 
 istream& Instruction::read_att(istream& is) {
+  long &ident_as_label = x64asm::ident_as_label_iword( is );
 
   string line;
   getline(is, line);
@@ -283,6 +284,8 @@ istream& Instruction::read_att(istream& is) {
   input >> std::ws;
   size_t operand_count = 1;
   while(input.good()) {
+    if ( ident_as_label )
+      input >> x64asm::ident_as_label;
     Operand op = Constants::rax();
     input >> op;
     if(failed(input)) {

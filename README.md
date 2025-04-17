@@ -13,6 +13,10 @@ reasons:
   information when call instructions are printed: a
   `x64asm::symbolic` I/O manipulator exists to allow this (without
   which you should get the original behavior)
+* Allow parsing conditional jump instructions where the target label
+  is a normal identifier rather than a local label: use the
+  `x64asm::ident_as_label` I/O manipulator to allow this (and without
+  it you should get the normal behavior)
 
 I *believe* that my changes are backwards compatible, but no guarantees.
 

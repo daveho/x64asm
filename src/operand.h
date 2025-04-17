@@ -26,6 +26,14 @@ limitations under the License.
 
 namespace x64asm {
 
+// Access the ident_as_label long element in the given istream.
+long &ident_as_label_iword( std::istream &is );
+
+// I/O manipulator to nudge Operand's input stream extraction
+// operator and Operand::read_att to treat ordinary identifiers as
+// a label rather than memory.
+std::istream &ident_as_label( std::istream &is );
+
 class RegSet;
 
 /** Base operand type. This class is provisioned with enough storage space
@@ -157,9 +165,13 @@ namespace std {
 inline ostream& operator<<(ostream& os, const x64asm::Operand& op) {
   return op.write_att(os);
 }
-inline istream& operator>>(istream& os, x64asm::Operand& op) {
-  return op.read_att(os);
+inline istream& operator>>(istream& is, x64asm::Operand& op) {
+  op.read_att(is);
+  x64asm::ident_as_label_iword( is ) = 0; // make sure this gets reset
+  return is;
 }
+
+
 } // namespace std
 
 
